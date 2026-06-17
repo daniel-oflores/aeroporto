@@ -29,3 +29,26 @@ function atualizarPainel() {
 }
 
 atualizarPainel();
+
+const formulario = document.getElementById("formDespacho");
+const campoCodigo = document.getElementById("inputCodigo");
+const campoDestino = document.getElementById("inputDestino");
+
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const codigoDigitado = campoCodigo.value;
+    const destinoDigitado = campoDestino.value;
+
+    let novoVoo = {
+        codigo: codigoDigitado,
+        destino: destinoDigitado,
+        status: "Embarque",
+        portao: "TBA"
+    };
+
+    listaDeVoos.push(novoVoo);
+    atualizarPainel();
+    
+    [campoCodigo, campoDestino].forEach(campo => campo.value = "");
+});
