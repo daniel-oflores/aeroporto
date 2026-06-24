@@ -5,12 +5,13 @@ if (listaStorage.length === 0) {
 }
 
 const tela = document.getElementById("telaDoAeroporto");
-const formulario = document.getElementById("formDespacho");
+const formulario = document.getElementById("formDespacho")
 const campoCodigo = document.getElementById("inputCodigo");
-const campoDestino = document.getElementById("inputDestino");
+const campoDestino = document.getElementById("inputDestino")
 
+//tive que refatorar isso aqui
 function atualizarPainel() {
-    tela.innerHTML = "";
+    tela.innerHTML = ""
 
     listaStorage.forEach(voo => {
         const divCriadaGulosa = document.createElement("div");
@@ -33,22 +34,24 @@ function atualizarPainel() {
     });
 }
 
+// reescrever formulatrio
 formulario.addEventListener("submit", function(evento) {
     evento.preventDefault();
 
     let novoVoo = { 
         codigo: campoCodigo.value, 
         destino: campoDestino.value, 
-        status: "Embarque" 
+        status: "Embarque"
     };
     
     listaStorage.push(novoVoo);
-    localStorage.setItem("diario_de_voos", JSON.stringify(listaStorage));
+    const listaParseada = JSON.parse(listaStorage)
+    localStorage.setItem("diario_de_voos", listaParseada);
 
     atualizarPainel();
     
-    campoCodigo.value = "";
-    campoDestino.value = "";
+    campoCodigo.value = ""
+    campoDestino.value = ""
 });
 
 atualizarPainel();
