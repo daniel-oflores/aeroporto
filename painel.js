@@ -1,6 +1,6 @@
 let listaStorage = JSON.parse(localStorage.getItem("diario_de_voos")) || [];
 
-if (listaStorage.length === 0) {
+if (listaStorage.length == 0) {
     localStorage.setItem("diario_de_voos", JSON.stringify(listaStorage));
 }
 
