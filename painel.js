@@ -1,40 +1,71 @@
-let listaStorage = JSON.parse(localStorage.getItem("diario_de_voos")) || [];
+// padronizei os arrays pra um so
+let listaDeVoos = JSON.parse(localStorage.getItem("diario_de_voos")) || [];
 
-if (listaStorage.length == 0) {
-    localStorage.setItem("diario_de_voos", JSON.stringify(listaStorage));
+if (listaDeVoos.length == 0) {
+    localStorage.setItem("diario_de_voos", JSON.stringify(listaDeVoos));
 }
 
 const tela = document.getElementById("telaDoAeroporto");
-const formulario = document.getElementById("formDespacho")
+const formulario = document.getElementById("formDespacho");
 const campoCodigo = document.getElementById("inputCodigo");
-const campoDestino = document.getElementById("inputDestino")
+const campoDestino = document.getElementById("inputDestino");
 
-//tive que refatorar isso aqui
+function salvarNoDiscoERenderizar() {
+    localStorage.setItem("diario_de_voos", JSON.stringify(listaDeVoos));
+    atualizarPainel();
+}
+
+function cancelarVoo(codigoAlvo) {
+    listaDeVoos = listaDeVoos.filter((voo) => voo.codigo !== codigoAlvo);
+    salvarNoDiscoERenderizar();
+}
+
+function alterarPortao(codigoAlvo, novoPortao) {
+    let index = listaDeVoos.findIndex((voo) => voo.codigo === codigoAlvo);
+
+    if (index !== -1) {
+        listaDeVoos[index].portao = novoPortao;
+        salvarNoDiscoERenderizar();
+    }
+}
+
 function atualizarPainel() {
-    tela.innerHTML = ""
+    tela.innerHTML = ""; 
 
-    listaStorage.forEach(voo => {
-        const divCriadaGulosa = document.createElement("div");
-        divCriadaGulosa.classList.add('card-voo');
+    listaDeVoos.forEach(voo => {
+        let novoCard = document.createElement("div");
+        novoCard.classList.add("card-voo");
+        
+        let portaoExibicao = voo.portao ? voo.portao : "Não definido";
 
-        Object.entries(voo).forEach(([chave, valor]) => {
-            divCriadaGulosa.innerHTML += `<b>${chave}</b>: ${valor} <br>`;
+        novoCard.innerHTML = `
+            <h3>Voo ${voo.codigo} - Destino: ${voo.destino}</h3>
+            <p>Status: ${voo.status}</p>
+            <p>Portão: ${portaoExibicao}</p>
+        `;
+
+        let btnCancelar = document.createElement("button");
+        btnCancelar.innerText = "Cancelar Voo";
+        btnCancelar.style.background = "red";
+        btnCancelar.addEventListener("click", function() {
+            if (confirm(`Tem certeza que deseja cancelar o voo ${voo.codigo}?`)) {
+                cancelarVoo(voo.codigo);
+            }
+        });
+    
+        let btnPortao = document.createElement("button");
+        btnPortao.innerText = "Mudar portão";
+        btnPortao.addEventListener("click", function() {
+            let novo = prompt("Digite o novo número do portão:");
+            if (novo) alterarPortao(voo.codigo, novo);
         });
 
-        const botao = document.createElement('button');
-        botao.classList.add('botao-decolar');
-        botao.innerHTML = "Decolar.";
-
-        botao.addEventListener('click', () => {
-            alert(`O voo ${voo.codigo} decolou. Tuff.`);
-        });
-
-        divCriadaGulosa.appendChild(botao);
-        tela.appendChild(divCriadaGulosa);
+        novoCard.appendChild(btnPortao);
+        novoCard.appendChild(btnCancelar);
+        tela.appendChild(novoCard);
     });
 }
 
-// reescrever formulatrio
 formulario.addEventListener("submit", function(evento) {
     evento.preventDefault();
 
@@ -44,14 +75,11 @@ formulario.addEventListener("submit", function(evento) {
         status: "Embarque"
     };
     
-    listaStorage.push(novoVoo);
-    const listaParseada = JSON.parse(listaStorage)
-    localStorage.setItem("diario_de_voos", listaParseada);
-
-    atualizarPainel();
+    listaDeVoos.push(novoVoo);
+    salvarNoDiscoERenderizar();
     
-    campoCodigo.value = ""
-    campoDestino.value = ""
+    campoCodigo.value = "";
+    campoDestino.value = "";
 });
 
 atualizarPainel();
