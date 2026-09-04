@@ -5,7 +5,7 @@ let frotaAtiva = [
 ];
 
 function renderizarPainel() {
-    let tela = document.getElementById("painel");
+    let tela = document.getElementById("telaDoAeroporto");
     tela.innerHTML = "<h2>Painel de Partidas Automático 🛫</h2>";
     
     frotaAtiva.forEach(voo => {
